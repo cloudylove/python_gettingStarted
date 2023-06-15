@@ -1,49 +1,41 @@
 # coding:utf-8
 ###############
-# Canvas - 點擊畫圓+反彈
+# Canvas - 三顆球
 ###############
 
 # import
 import tkinter as tk
 
-# 圓形座標
-x = 0
-y = 0
-# 移動量
-dx = 1
-dy = 1
-
-# 點擊事件
-def click(event):
-    # 描繪圓形
-    canvas.create_oval(event.x-20, event.y-20, event.x+20, event.y+20, fill = "red", width = 0)
-
-    # 點擊處畫圓，消除舊圓
-    global x, y #全域變數
-    canvas.create_oval(x-20, y-20, x+20, y+20, fill = "white", width = 0)
-    x = event.x
-    y = event.y
-    canvas.create_oval(x-20, y-20, x+20, y+20, fill = "red", width = 0)
+# 三顆球
+# 串列包字典 # 圓型座標&移動量&顏色
+balls = [
+    {"x":0, "y":0, "dx":1, "dy":1, "color":"red"},
+    {"x":120, "y":0, "dx":1, "dy":1, "color":"blue"},
+    {"x":0, "y":350, "dx":1, "dy":1, "color":"green"},
+]
 
 # 移動事件
 def move():
-    global x, y, dx, dy
-    canvas.create_oval(x-20, y-20, x+20, y+20, fill = "white", width = 0) #舊圓
-    x = x+dx
-    y = y+dy
-    canvas.create_oval(x-20, y-20, x+20, y+20, fill = "red", width = 0) #新圓
-    # 邊界反彈
-    if x >= canvas.winfo_width():
-        dx = -1
-    if x <= 0:
-        dx = +1
-    if y >= canvas.winfo_height():
-        dy = -1
-    if y <= 0:
-        dy = +1
-    # 重啟計時器
+    # 三顆球用串列包字典
+    global balls
+    for i in balls:
+        # 清除舊圓
+        canvas.create_oval(i["x"]-20, i["y"]-20, i["x"]+20, i["y"]+20, fill = "white", width = 0) 
+        # 移動座標
+        i["x"] = i["x"]+i["dx"]
+        i["y"] = i["y"]+i["dy"]
+        # 新圓
+        canvas.create_oval(i["x"]-20, i["y"]-20, i["x"]+20, i["y"]+20, fill = i["color"], width = 0) #新圓
+        # 邊界反彈
+        if i["x"] >= canvas.winfo_width():
+            i["dx"] = -1
+        if i["x"] <= 0:
+            i["dx"] = +1
+        if i["y"] >= canvas.winfo_height():
+            i["dy"] = -1
+        if i["y"] <= 0:
+            i["dy"] = +1
     root.after(10, move)
-
 
 # 描繪視窗
 root = tk.Tk()
@@ -53,10 +45,8 @@ root.geometry("600x400")
 canvas = tk.Canvas(root, width = 600, height = 400, bg = "white")
 canvas.place(x = 0, y = 0)
 
-# 設定事件
-canvas.bind("<Button-1>", click) #點擊左鍵
-
 # 設定計時器
-root.after(10, move)
+root.after(10, loop)
+
 
 root.mainloop()
