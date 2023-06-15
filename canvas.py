@@ -1,41 +1,44 @@
 # coding:utf-8
 ###############
-# Canvas - 三顆球
+# Canvas - 類別畫球
 ###############
 
 # import
 import tkinter as tk
 
-# 三顆球
-# 串列包字典 # 圓型座標&移動量&顏色
-balls = [
-    {"x":0, "y":0, "dx":1, "dy":1, "color":"red"},
-    {"x":120, "y":0, "dx":1, "dy":1, "color":"blue"},
-    {"x":0, "y":350, "dx":1, "dy":1, "color":"green"},
-]
+# 類別
+class Ball:
+    # 建構子(constructor)
+    def __init__(self, x, y, dx, dy, color): #self指向該物件
+        self.x = x
+        self.y = y
+        self.dx = dx
+        self.dy = dy
+        self.color = color
+    # method
+    def test(self):
+        print(self.x)
+        print(self.y)
+    def move(self, canvas):
+        canvas.create_oval(self.x-20, self.y-20, self.x+20, self.y+20, fill = "white", width = 0)
+        self.x = self.x + self.dx
+        self.y = self.y + self.dy
+        canvas.create_oval(self.x-20, self.y-20, self.x+20, self.y+20, fill = self.color, width = 0)
+        if self.x >= canvas.winfo_width():
+            self.dx = -1
+        if self.x <= 0:
+            self.dx = +1
+        if self.y >= canvas.winfo_height():
+            self.dy = -1
+        if self.y <= 0:
+            self.dy = +1
+# 帶入實例變數(instance variable)
+b = Ball(400, 300, 1, 1, "red")
+b.test()
 
-# 移動事件
-def move():
-    # 三顆球用串列包字典
-    global balls
-    for i in balls:
-        # 清除舊圓
-        canvas.create_oval(i["x"]-20, i["y"]-20, i["x"]+20, i["y"]+20, fill = "white", width = 0) 
-        # 移動座標
-        i["x"] = i["x"]+i["dx"]
-        i["y"] = i["y"]+i["dy"]
-        # 新圓
-        canvas.create_oval(i["x"]-20, i["y"]-20, i["x"]+20, i["y"]+20, fill = i["color"], width = 0) #新圓
-        # 邊界反彈
-        if i["x"] >= canvas.winfo_width():
-            i["dx"] = -1
-        if i["x"] <= 0:
-            i["dx"] = +1
-        if i["y"] >= canvas.winfo_height():
-            i["dy"] = -1
-        if i["y"] <= 0:
-            i["dy"] = +1
-    root.after(10, move)
+def loop():
+    b.move(canvas) #移動
+    root.after(10,loop) #0.01秒後重新執行
 
 # 描繪視窗
 root = tk.Tk()
@@ -44,6 +47,7 @@ root.geometry("600x400")
 # Canvas
 canvas = tk.Canvas(root, width = 600, height = 400, bg = "white")
 canvas.place(x = 0, y = 0)
+
 
 # 設定計時器
 root.after(10, loop)
